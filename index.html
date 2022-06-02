@@ -127,19 +127,15 @@
             }     
             
                 let ifIsPressedLeftMouse=false;
-                function ifIsInRange(ev){
-                    let whetherIsInRange=ev.clientX-canv.offsetLeft>firstPlayer.startPointX && ev.clientX-canv.offsetLeft<=(firstPlayer.startPointX+firstPlayer.width)
-                    && ((ev.clientY-canv.offsetTop< firstPlayer.startPointY+firstPlayer.height)&& (ev.clientY-canv.offsetTop>=firstPlayer.startPointY-100));
-                        return whetherIsInRange;
-                }
+                
                 
                     if (blockingTurnVariable === false) {
                         canv.addEventListener("mousedown",function(ev){
-                            if(ifIsInRange(ev)){
+                            
                                 ifIsPressedLeftMouse=true;
                                 printAiming(ev.clientX,ev.clientY);
                                 indexInPrintShoot=0;
-                            }
+                            
                         })
                     }
                     
