@@ -12,6 +12,7 @@
         <h1>SHOOTING GAME!!!</h1>
         <canvas id="mainCanvas" width="1000" height="500">
             <img id="background" src="graphic/background.png">
+            <img id="boat" src="graphic/boat.png">
         </canvas>
         
         <script data-brackets-id='55'>
@@ -48,9 +49,9 @@
                 
             }
             
-            let firstPlayer= new Player(125,20,"white",50,canvasHeight-50);
+            let firstPlayer= new Player(125,60,"white",50,canvasHeight-50);
 
-            let secondPlayer=new Player(125,20,"white",canvasWidth-50-125,canvasHeight-50);
+            let secondPlayer=new Player(125,60,"white",canvasWidth-50-125,canvasHeight-50);
             
             let bullet=new Bullet();
             
@@ -295,8 +296,10 @@
                     ctx.drawImage(background,0,0);
                 }
                 function printPlayer(player){
-                    ctx.fillStyle=player.color;
-                    ctx.fillRect(player.startPointX,player.startPointY,player.width,player.height);
+                    
+                    
+                    let boat=document.getElementById('boat');
+                    ctx.drawImage(boat,player.startPointX,player.startPointY);
                     
                     ctx.fillStyle="red";
                     ctx.fillRect(player.centerX-player.life/2,player.centerY-70,player.life,5);
