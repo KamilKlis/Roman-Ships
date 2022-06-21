@@ -10,9 +10,12 @@
     </head>
     <body>
         <h1>SHOOTING GAME!!!</h1>
-        <canvas id="mainCanvas" width="1000" height="500"></canvas>
+        <canvas id="mainCanvas" width="1000" height="500">
+            <img id="starImage" src="oryginalPossisionStar.png">
+            <img id="background" src="graphic/background.png">
+        </canvas>
         
-                <script data-brackets-id='55'>
+        <script data-brackets-id='55'>
             const canv=document.getElementById('mainCanvas');
             const ctx=canv.getContext('2d');
             let canvasWidth=canv.width;
@@ -100,6 +103,7 @@
                     for(i=startNumber;i<bulletCoordinatesList.length;i++){
                         if(i<endNumber){
                             ctx.fillRect(bulletCoordinatesList[i].x,bulletCoordinatesList[i].y-bullet.height,bullet.width,bullet.height);  
+                            
                         }
                     }
                 }
@@ -126,9 +130,8 @@
             }     
             
                 let ifIsPressedLeftMouse=false;
-                
-                
-                    if (blockingTurnVariable === false) {
+            
+                    
                         canv.addEventListener("mousedown",function(ev){
                             
                                 ifIsPressedLeftMouse=true;
@@ -136,9 +139,8 @@
                                 indexInPrintShoot=0;
                             
                         })
-                    }
                     
-                    if (blockingTurnVariable === false) {
+                
                         canv.addEventListener("mouseup",function(ev){
                             ifIsPressedLeftMouse=false;
                             blockingTurnVariable=true;
@@ -151,7 +153,7 @@
                             firstClickOnX=undefined;
                             firstClickOnY=undefined;
                         })
-                    }
+                    
             
                     let firstClickOnX;
                     let firstClickOnY;
@@ -161,7 +163,7 @@
             
                     
                         canv.addEventListener("mousemove",function(ev){
-                            if(ifIsPressedLeftMouse===true &&blockingTurnVariable===false){
+                            if(ifIsPressedLeftMouse===true){
 
                                 const AIMING_SENSITIVY_X_SETTING=0.8;
                                 const AIMING_SENSITIVY_Y_SETTING=0.8;
@@ -204,12 +206,11 @@
                         }
                         mainPrint();
                     })
-//            poprawic keydown
+
             
             let indexInPrintShoot=7;
             let stopShoot;
             function shoot(){
-                blockingTurnVariable=true;
                 if(
                     (whetherbulletXIsInPLayerX(turn)
                     &&
@@ -290,12 +291,17 @@
                 printPlayer(secondPlayer);
                 
                 function printCanvasBackground(){
-                    ctx.fillStyle="black";
-                    ctx.fillRect(0,0,canvasWidth,canvasHeight);
+
+                    let background=document.getElementById('background');
+                    ctx.drawImage(background,0,0);
                 }
                 function printPlayer(player){
                     ctx.fillStyle=player.color;
                     ctx.fillRect(player.startPointX,player.startPointY,player.width,player.height);
+                    
+                    let starImage=document.getElementById('starImage');
+                    ctx.drawImage(starImage,firstPlayer.endPointX+50,firstPlayer.endPointY-70);
+                    
                     ctx.fillStyle="red";
                     ctx.fillRect(player.centerX-player.life/2,player.centerY-70,player.life,5);
                 }
