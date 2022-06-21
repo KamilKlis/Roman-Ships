@@ -13,6 +13,10 @@
         <canvas id="mainCanvas" width="1000" height="500">
             <img id="background" src="graphic/background.png">
             <img id="boat" src="graphic/boat.png">
+            <img id="heart" src="graphic/heart.png">
+            <img id="bullet" src="graphic/bullet.png">
+            <img id="aim" src="graphic/aim.png">
+            <img id="bumSmall" src="graphic/bumSmall.png">
         </canvas>
         
         <script data-brackets-id='55'>
@@ -49,9 +53,9 @@
                 
             }
             
-            let firstPlayer= new Player(125,60,"white",50,canvasHeight-50);
+            let firstPlayer= new Player(125,60,"white",50,canvasHeight-30);
 
-            let secondPlayer=new Player(125,60,"white",canvasWidth-50-125,canvasHeight-50);
+            let secondPlayer=new Player(125,60,"white",canvasWidth-50-125,canvasHeight-30);
             
             let bullet=new Bullet();
             
@@ -101,9 +105,9 @@
                 function printValues(startNumber,endNumber,color){
                     ctx.fillStyle=color;
                     for(i=startNumber;i<bulletCoordinatesList.length;i++){
-                        if(i<endNumber){
-                            ctx.fillRect(bulletCoordinatesList[i].x,bulletCoordinatesList[i].y-bullet.height,bullet.width,bullet.height);  
-                            
+                        if(i<endNumber){ 
+                            let aimPrinter=document.getElementById('aim');
+                            ctx.drawImage(aimPrinter,bulletCoordinatesList[i].x,bulletCoordinatesList[i].y-bullet.height);
                         }
                     }
                 }
@@ -217,10 +221,11 @@
                     whetherbulletYIsInPLayerY(turn))
                     ){
                     mainPrint();
-                    ctx.fillStyle="yellow";
+                    let bum=document.getElementById('bumSmall');
                     function damage(turn) {
-                        if(turn==="firstPlayer"){ 
-                            ctx.fillRect(bulletCoordinatesList[indexInPrintShoot].x,firstPlayer.startPointY-bullet.height/4-                         bullet.height,bullet.width*2,bullet.height*2);
+                        if(turn==="firstPlayer"){
+                            
+                            ctx.drawImage(bum,bulletCoordinatesList[indexInPrintShoot].x,firstPlayer.startPointY-bullet.height/4-bullet.height);
                             if(firstPlayer.life>0){
                                 firstPlayer.life-=20;
                             }
@@ -228,7 +233,7 @@
                             setTimeout(mainPrint,150);
                           
                         }else if(turn==="secondPlayer"){
-                            ctx.fillRect(bulletCoordinatesList[indexInPrintShoot].x,secondPlayer.startPointY-bullet.height/4-                       bullet.height,bullet.width*2,bullet.height*2);
+                            ctx.drawImage(bum,bulletCoordinatesList[indexInPrintShoot].x,secondPlayer.startPointY-bullet.height/4-bullet.height);                    
                             if(secondPlayer.life){
                                 secondPlayer.life-=20;
                             }
@@ -243,7 +248,9 @@
                 
                     }else{
                     mainPrint();
-                    ctx.fillRect(bulletCoordinatesList[indexInPrintShoot].x,bulletCoordinatesList[indexInPrintShoot].y,bullet.width,bullet.height);
+                    
+                    let bulletPrinter=document.getElementById('bullet');
+                    ctx.drawImage(bulletPrinter,bulletCoordinatesList[indexInPrintShoot].x,bulletCoordinatesList[indexInPrintShoot].y);
                     indexInPrintShoot++;
                     if(indexInPrintShoot>5&&bulletCoordinatesList[indexInPrintShoot-1].y>secondPlayer.endPointY){
                         clearInterval(stopShoot);
@@ -296,13 +303,14 @@
                     ctx.drawImage(background,0,0);
                 }
                 function printPlayer(player){
-                    
-                    
                     let boat=document.getElementById('boat');
                     ctx.drawImage(boat,player.startPointX,player.startPointY);
                     
+                    let heart=document.getElementById('heart');
+                    
+                    ctx.drawImage(heart,player.centerX-player.life/2-20,player.centerY-40-heart.height/2+2);
                     ctx.fillStyle="red";
-                    ctx.fillRect(player.centerX-player.life/2,player.centerY-70,player.life,5);
+                    ctx.fillRect(player.centerX-player.life/2+10,player.centerY-40,player.life,5);
                 }
             }
             
