@@ -11,7 +11,6 @@
     <body>
         <h1>SHOOTING GAME!!!</h1>
         <canvas id="mainCanvas" width="1000" height="500">
-            <img id="starImage" src="oryginalPossisionStar.png">
             <img id="background" src="graphic/background.png">
         </canvas>
         
@@ -298,9 +297,6 @@
                 function printPlayer(player){
                     ctx.fillStyle=player.color;
                     ctx.fillRect(player.startPointX,player.startPointY,player.width,player.height);
-                    
-                    let starImage=document.getElementById('starImage');
-                    ctx.drawImage(starImage,firstPlayer.endPointX+50,firstPlayer.endPointY-70);
                     
                     ctx.fillStyle="red";
                     ctx.fillRect(player.centerX-player.life/2,player.centerY-70,player.life,5);
