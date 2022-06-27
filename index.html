@@ -27,7 +27,14 @@
             
             let turn="firstPlayer";
             let executeNumberMouseUp=-1;
-            let blockingTurnVariable=false;            
+            let blockingTurnVariable=false;
+            let firstClickOnX;
+            let firstClickOnY;
+            let mouseMoveOnX;
+            let mouseMoveOnY;
+            const BULLET_COORDINATES_LIST_LENGHT=100;
+            let ifIsPressedLeftMouse=false;
+
     
             function Player(width,height,color,startPointX,startPointY){
                 this.width=width;
@@ -39,9 +46,7 @@
                 this.endPointY=startPointY+height;
                 this.centerX=startPointX+(width/2);
                 this.centerY=canvasHeight-50-height;
-                this.life=100;
-                
-                
+                this.life=100;  
             }
             
             function Bullet(startPointX,startPointY){
@@ -50,7 +55,6 @@
                 this.width=10;
                 this.height=10;
                 this.color="red";
-                
             }
             
             let firstPlayer= new Player(125,60,"white",50,canvasHeight-30);
@@ -59,19 +63,95 @@
             
             let bullet=new Bullet();
             
-            const BULLET_COORDINATES_LIST_LENGHT=100;
             let bulletCoordinatesList=new Array(BULLET_COORDINATES_LIST_LENGHT);
             function Coordinates(x,y){
                 this.x=x;
                 this.y=y;
             }
+            
+            
+            canv.addEventListener("mousedown",function(ev){
+                ifIsPressedLeftMouse=true;
+                printAiming(ev.clientX,ev.clientY);
+                indexInPrintShoot=0;
+            })
+        
+    
+            canv.addEventListener("mouseup",function(ev){
+                ifIsPressedLeftMouse=false;
+                blockingTurnVariable=true;
+                printShoot();
+                if(turn==="firstPlayer"){
+                    turn="secondPlayer";
+                }else if(turn==="secondPlayer"){
+                    turn="firstPlayer";
+                }
+                firstClickOnX=undefined;
+                firstClickOnY=undefined;
+            })
+                        
+            canv.addEventListener("mousemove",function(ev){
+                if(ifIsPressedLeftMouse===true){
 
+                    const AIMING_SENSITIVY_X_SETTING=0.8;
+                    const AIMING_SENSITIVY_Y_SETTING=0.8;
+                    const AIMING_ANGLE_X_SETTING=35;
+                    const AIMING_ANGLE_Y_SETTING=35;
+
+                    calculateMouseMoveXAndY();
+                    printAiming(mouseMoveOnX/AIMING_SENSITIVY_X_SETTING,mouseMoveOnY/AIMING_SENSITIVY_Y_SETTING);
+
+                    function calculateMouseMoveXAndY() {
+                        if(firstClickOnX===undefined){
+                            firstClickOnX=ev.clientX;
+                        }
+                        if(firstClickOnY===undefined){
+                            firstClickOnY=ev.clientY;
+                        }
+
+                        if(firstClickOnX-ev.clientX<AIMING_ANGLE_X_SETTING){
+                            mouseMoveOnX=firstClickOnX-ev.clientX;
+                        }
+                        if(firstClickOnY-ev.clientY<AIMING_ANGLE_Y_SETTING){
+                            mouseMoveOnY=ev.clientY-firstClickOnY;
+                        }
+                    }
+                }
+            })
+        
+            window.addEventListener("keydown",function(ev){
+                let moveOnXSensitivity=4;
+                if(ev.key==="d"){
+                    firstPlayer.startPointX+=moveOnXSensitivity;
+                    firstPlayer.endPointX+=moveOnXSensitivity;
+                }
+                if(ev.key==="a"){
+                    firstPlayer.startPointX-=moveOnXSensitivity;
+                    firstPlayer.endPointX-=moveOnXSensitivity;
+                }
+                mainPrint();
+            })
             
             
+            function printAiming(mouseMoveOnX,mouseMoveOnY) {    
+                mainPrint();
+                if(turn==="firstPlayer"){
+                    firstPlayerAiming(mouseMoveOnX,mouseMoveOnY);
+                }
+                else if(turn==="secondPlayer"){
+                    secondPlayerAiming(mouseMoveOnX,mouseMoveOnY);
+                }
+            }
             
+            function firstPlayerAiming(mouseMoveOnX,mouseMoveOnY){
+                aiming(mouseMoveOnX, mouseMoveOnY,firstPlayer.endPointX,firstPlayer.startPointY);    
+            }
             
+            function secondPlayerAiming(mouseMoveOnX,mouseMoveOnY){
+                aiming(mouseMoveOnX, mouseMoveOnY,secondPlayer.startPointX-bullet.width,secondPlayer.startPointY);
+            }
             
-          function aiming(mouseMoveOnX, mouseMoveOnY,startPointX,startPointY) {
+            function aiming(mouseMoveOnX, mouseMoveOnY,startPointX,startPointY) {
                 for(i=0;i<BULLET_COORDINATES_LIST_LENGHT;i++){
                     setStartListValue();
                     setListValuesLocation();
@@ -113,104 +193,9 @@
                 }
             }
             
-            function firstPlayerAiming(mouseMoveOnX,mouseMoveOnY){
-                aiming(mouseMoveOnX, mouseMoveOnY,firstPlayer.endPointX,firstPlayer.startPointY);
-                
+            function printShoot(){
+                stopShoot=setInterval(shoot,1000/60);
             }
-            
-            function secondPlayerAiming(mouseMoveOnX,mouseMoveOnY){
-                aiming(mouseMoveOnX, mouseMoveOnY,secondPlayer.startPointX-bullet.width,secondPlayer.startPointY);
-            }
-            
-            function printAiming(mouseMoveOnX,mouseMoveOnY) {
-                
-                mainPrint();
-                if(turn==="firstPlayer"){
-                    firstPlayerAiming(mouseMoveOnX,mouseMoveOnY);
-                }
-                else if(turn==="secondPlayer"){
-                    secondPlayerAiming(mouseMoveOnX,mouseMoveOnY);
-                }
-            }     
-            
-                let ifIsPressedLeftMouse=false;
-            
-                    
-                        canv.addEventListener("mousedown",function(ev){
-                            
-                                ifIsPressedLeftMouse=true;
-                                printAiming(ev.clientX,ev.clientY);
-                                indexInPrintShoot=0;
-                            
-                        })
-                    
-                
-                        canv.addEventListener("mouseup",function(ev){
-                            ifIsPressedLeftMouse=false;
-                            blockingTurnVariable=true;
-                            printShoot();
-                            if(turn==="firstPlayer"){
-                                turn="secondPlayer";
-                            }else if(turn==="secondPlayer"){
-                                turn="firstPlayer";
-                            }
-                            firstClickOnX=undefined;
-                            firstClickOnY=undefined;
-                        })
-                    
-            
-                    let firstClickOnX;
-                    let firstClickOnY;
-                    let mouseMoveOnX;
-                    let mouseMoveOnY;
-                    
-            
-                    
-                        canv.addEventListener("mousemove",function(ev){
-                            if(ifIsPressedLeftMouse===true){
-
-                                const AIMING_SENSITIVY_X_SETTING=0.8;
-                                const AIMING_SENSITIVY_Y_SETTING=0.8;
-                                const AIMING_ANGLE_X_SETTING=35;
-                                const AIMING_ANGLE_Y_SETTING=35;
-
-                                calculateMouseMoveXAndY();
-                                printAiming(mouseMoveOnX/AIMING_SENSITIVY_X_SETTING,mouseMoveOnY/AIMING_SENSITIVY_Y_SETTING);
-
-
-                                function calculateMouseMoveXAndY() {
-                                    if(firstClickOnX===undefined){
-                                        firstClickOnX=ev.clientX;
-                                    }
-                                    if(firstClickOnY===undefined){
-                                        firstClickOnY=ev.clientY;
-                                    }
-
-                                    if(firstClickOnX-ev.clientX<AIMING_ANGLE_X_SETTING){
-                                        mouseMoveOnX=firstClickOnX-ev.clientX;
-                                    }
-                                    if(firstClickOnY-ev.clientY<AIMING_ANGLE_Y_SETTING){
-                                        mouseMoveOnY=ev.clientY-firstClickOnY;
-                                    }
-                                }
-                            }
-                        })
-                    
-            
-            
-                    window.addEventListener("keydown",function(ev){
-                        let moveOnXSensitivity=4;
-                        if(ev.key==="d"){
-                            firstPlayer.startPointX+=moveOnXSensitivity;
-                            firstPlayer.endPointX+=moveOnXSensitivity;
-                        }
-                        if(ev.key==="a"){
-                            firstPlayer.startPointX-=moveOnXSensitivity;
-                            firstPlayer.endPointX-=moveOnXSensitivity;
-                        }
-                        mainPrint();
-                    })
-
             
             let indexInPrintShoot=7;
             let stopShoot;
@@ -222,9 +207,9 @@
                     ){
                     mainPrint();
                     let bum=document.getElementById('bumSmall');
+                    damage(turn);
                     function damage(turn) {
                         if(turn==="firstPlayer"){
-                            
                             ctx.drawImage(bum,bulletCoordinatesList[indexInPrintShoot].x,firstPlayer.startPointY-bullet.height/4-bullet.height);
                             if(firstPlayer.life>0){
                                 firstPlayer.life-=20;
@@ -239,23 +224,18 @@
                             }
                             clearInterval(stopShoot);
                             setTimeout(mainPrint,150);
-                            
                         }
                     }
-                    
-                    damage(turn);
-                
-                
-                    }else{
+                }
+                else{
                     mainPrint();
-                    
                     let bulletPrinter=document.getElementById('bullet');
                     ctx.drawImage(bulletPrinter,bulletCoordinatesList[indexInPrintShoot].x,bulletCoordinatesList[indexInPrintShoot].y);
                     indexInPrintShoot++;
                     if(indexInPrintShoot>5&&bulletCoordinatesList[indexInPrintShoot-1].y>secondPlayer.endPointY){
                         clearInterval(stopShoot);
-                        }
                     }
+                }
                 
                 function whetherbulletXIsInPLayerX(turn){
                     if(turn==="secondPlayer"){
@@ -286,10 +266,6 @@
                             
                 }
                 blockingTurnVariable=false;
-            }
-            
-            function printShoot(){
-                stopShoot=setInterval(shoot,1000/60);
             }
 
             function mainPrint(){
