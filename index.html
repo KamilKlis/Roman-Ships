@@ -69,70 +69,6 @@
                 this.y=y;
             }
             
-            
-            canv.addEventListener("mousedown",function(ev){
-                ifIsPressedLeftMouse=true;
-                printAiming(ev.clientX,ev.clientY);
-                indexInPrintShoot=0;
-            })
-        
-    
-            canv.addEventListener("mouseup",function(ev){
-                ifIsPressedLeftMouse=false;
-                blockingTurnVariable=true;
-                printShoot();
-                if(turn==="firstPlayer"){
-                    turn="secondPlayer";
-                }else if(turn==="secondPlayer"){
-                    turn="firstPlayer";
-                }
-                firstClickOnX=undefined;
-                firstClickOnY=undefined;
-            })
-                        
-            canv.addEventListener("mousemove",function(ev){
-                if(ifIsPressedLeftMouse===true){
-
-                    const AIMING_SENSITIVY_X_SETTING=0.8;
-                    const AIMING_SENSITIVY_Y_SETTING=0.8;
-                    const AIMING_ANGLE_X_SETTING=35;
-                    const AIMING_ANGLE_Y_SETTING=35;
-
-                    calculateMouseMoveXAndY();
-                    printAiming(mouseMoveOnX/AIMING_SENSITIVY_X_SETTING,mouseMoveOnY/AIMING_SENSITIVY_Y_SETTING);
-
-                    function calculateMouseMoveXAndY() {
-                        if(firstClickOnX===undefined){
-                            firstClickOnX=ev.clientX;
-                        }
-                        if(firstClickOnY===undefined){
-                            firstClickOnY=ev.clientY;
-                        }
-
-                        if(firstClickOnX-ev.clientX<AIMING_ANGLE_X_SETTING){
-                            mouseMoveOnX=firstClickOnX-ev.clientX;
-                        }
-                        if(firstClickOnY-ev.clientY<AIMING_ANGLE_Y_SETTING){
-                            mouseMoveOnY=ev.clientY-firstClickOnY;
-                        }
-                    }
-                }
-            })
-        
-            window.addEventListener("keydown",function(ev){
-                let moveOnXSensitivity=4;
-                if(ev.key==="d"){
-                    firstPlayer.startPointX+=moveOnXSensitivity;
-                    firstPlayer.endPointX+=moveOnXSensitivity;
-                }
-                if(ev.key==="a"){
-                    firstPlayer.startPointX-=moveOnXSensitivity;
-                    firstPlayer.endPointX-=moveOnXSensitivity;
-                }
-                mainPrint();
-            })
-            
-            
             function printAiming(mouseMoveOnX,mouseMoveOnY) {    
                 mainPrint();
                 if(turn==="firstPlayer"){
@@ -199,6 +135,7 @@
             
             let indexInPrintShoot=7;
             let stopShoot;
+            let bum=document.getElementById('bumSmall');
             function shoot(){
                 if(
                     (whetherbulletXIsInPLayerX(turn)
@@ -206,20 +143,23 @@
                     whetherbulletYIsInPLayerY(turn))
                     ){
                     mainPrint();
-                    let bum=document.getElementById('bumSmall');
+                    
                     damage(turn);
                     function damage(turn) {
                         if(turn==="firstPlayer"){
                             ctx.drawImage(bum,bulletCoordinatesList[indexInPrintShoot].x,firstPlayer.startPointY-bullet.height/4-bullet.height);
                             if(firstPlayer.life>0){
-                                firstPlayer.life-=20;
+                                firstPlayer.life-=20;    
+                            }else{
+                                ctx.drawImage(bum,firstPlayer.startPointX+100,firstPlayer.startPointY-100);
+                                location.href="mainPage.html";
                             }
                             clearInterval(stopShoot);
                             setTimeout(mainPrint,150);
-                          
+                        
                         }else if(turn==="secondPlayer"){
-                            ctx.drawImage(bum,bulletCoordinatesList[indexInPrintShoot].x,secondPlayer.startPointY-bullet.height/4-bullet.height);                    
-                            if(secondPlayer.life){
+                            ctx.drawImage(bum,bulletCoordinatesList[indexInPrintShoot].x,secondPlayer.startPointY-bullet.height/4-bullet.height);
+                            if(secondPlayer.life>0){
                                 secondPlayer.life-=20;
                             }
                             clearInterval(stopShoot);
@@ -262,10 +202,8 @@
                             bulletCoordinatesList[indexInPrintShoot].y+bullet.height>=firstPlayer.startPointY &&
                             bulletCoordinatesList[indexInPrintShoot].y<=(firstPlayer.endPointY);
                         return whetherbulletYIsInFirstPLayerY;
-                    }
-                            
+                    }        
                 }
-                blockingTurnVariable=false;
             }
 
             function mainPrint(){
@@ -291,6 +229,93 @@
             }
             
             mainPrint();
+            addEvents();
+            
+            function addEvents(){
+                
+                window.addEventListener("keydown",moveFirstPlayer());
+                canv.addEventListener("mousedown",mouseDownFunction());
+                canv.addEventListener("mouseup",mouseUpFunction());
+                canv.addEventListener("mousemove",mouseMoveFunction());
+            }
+            function removeEvents(){
+                
+                window.removeEventListener("keydown",moveFirstPlayer());
+                canv.removeEventListener("mousedown",mouseDownFunction());
+                canv.removeEventListener("mouseup",mouseUpFunction());
+                canv.removeEventListener("mousemove",mouseMoveFunction());
+            }
+            
+                function moveFirstPlayer() {
+                    return function(ev){
+                        let moveOnXSensitivity=4;
+                        if(ev.key==="d"){
+                            firstPlayer.startPointX+=moveOnXSensitivity;
+                            firstPlayer.endPointX+=moveOnXSensitivity;
+                        }
+                        if(ev.key==="a"){
+                            firstPlayer.startPointX-=moveOnXSensitivity;
+                            firstPlayer.endPointX-=moveOnXSensitivity;
+                        }
+                        mainPrint();
+                    }
+                }
+                function mouseDownFunction() {
+                    return function(ev){
+                        ifIsPressedLeftMouse=true;
+                        printAiming(ev.clientX,ev.clientY);
+                        indexInPrintShoot=1;
+                    }
+                }
+                
+    
+                function mouseUpFunction(){
+                    return function(ev){
+                        ifIsPressedLeftMouse=false;
+                        printShoot();
+                        if(turn==="firstPlayer"){
+                            turn="secondPlayer";
+                        }else if(turn==="secondPlayer"){
+                            turn="firstPlayer";
+                        }
+                        firstClickOnX=undefined;
+                        firstClickOnY=undefined;
+                    }
+                }
+            
+                function mouseMoveFunction(){
+                    return function(ev){
+                        if(ifIsPressedLeftMouse===true){
+
+                            const AIMING_SENSITIVY_X_SETTING=0.8;
+                            const AIMING_SENSITIVY_Y_SETTING=0.8;
+                            const AIMING_ANGLE_X_SETTING=35;
+                            const AIMING_ANGLE_Y_SETTING=35;
+
+                            calculateMouseMoveXAndY();
+                            printAiming(mouseMoveOnX/AIMING_SENSITIVY_X_SETTING,mouseMoveOnY/AIMING_SENSITIVY_Y_SETTING);
+
+                            function calculateMouseMoveXAndY() {
+                                if(firstClickOnX===undefined){
+                                    firstClickOnX=ev.clientX;
+                                }
+                                if(firstClickOnY===undefined){
+                                    firstClickOnY=ev.clientY;
+                                }
+
+                                if(firstClickOnX-ev.clientX<AIMING_ANGLE_X_SETTING){
+                                    mouseMoveOnX=firstClickOnX-ev.clientX;
+                                }
+                                if(firstClickOnY-ev.clientY<AIMING_ANGLE_Y_SETTING){
+                                    mouseMoveOnY=ev.clientY-firstClickOnY;
+                                }
+                            }
+                        }
+                    }
+                }     
+            
+
+            
         </script>
     </body>
 </html>
