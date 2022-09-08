@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>GETTING STARTED WITH BRACKETS</title>
+        <meta name="description" content="An interactive getting started guide for Brackets.">
+        <link rel="stylesheet" href="main.css">
+    </head>
+    <body>
+        <h1>SHOOTING GAME!!!</h1>
+<!--        <button id "NGB"><img src="graphic/bumLarge.png"></button>-->
+        <canvas id="mainCanvas" width="1000" height="500">
+            <img id="background" src="graphic/background.png">
+            <img id="newGameButton" src="graphic/bumLarge.png">
+        </canvas>
+        
+        <script data-brackets-id='55'>
+            const canv=document.getElementById('mainCanvas');
+            const ctx=canv.getContext('2d');
+            let canvasWidth=canv.width;
+            let canvasHeight=canv.height;
+            
+            let newGameButton=document.getElementById("newGameButton");
+            let background=document.getElementById('background');
+            function mainPrint(){
+                printCanvasBackground();
+                printButtons();
+                
+                function printCanvasBackground(){
+                    
+                    ctx.drawImage(background,0,0);
+                }
+                function printButtons(){
+                    ctx.drawImage(newGameButton,canvasWidth/2-newGameButton.width/2,canvasHeight/5);
+                }
+            }
+            
+            mainPrint();
+            
+            canv.addEventListener("click",function(ev){
+                location.href="index.html";
+            });
+            
+        </script>
+    </body>
+</html>
