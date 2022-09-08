@@ -137,35 +137,12 @@
             let stopShoot;
             let bum=document.getElementById('bumSmall');
             function shoot(){
-                if(
-                    (whetherbulletXIsInPLayerX(turn)
+                if((whetherbulletXIsInPLayerX(turn)
                     &&
                     whetherbulletYIsInPLayerY(turn))
-                    ){
+                ){
                     mainPrint();
-                    
                     damage(turn);
-                    function damage(turn) {
-                        if(turn==="firstPlayer"){
-                            ctx.drawImage(bum,bulletCoordinatesList[indexInPrintShoot].x,firstPlayer.startPointY-bullet.height/4-bullet.height);
-                            if(firstPlayer.life>0){
-                                firstPlayer.life-=20;    
-                            }else{
-                                ctx.drawImage(bum,firstPlayer.startPointX+100,firstPlayer.startPointY-100);
-                                location.href="mainPage.html";
-                            }
-                            clearInterval(stopShoot);
-                            setTimeout(mainPrint,150);
-                        
-                        }else if(turn==="secondPlayer"){
-                            ctx.drawImage(bum,bulletCoordinatesList[indexInPrintShoot].x,secondPlayer.startPointY-bullet.height/4-bullet.height);
-                            if(secondPlayer.life>0){
-                                secondPlayer.life-=20;
-                            }
-                            clearInterval(stopShoot);
-                            setTimeout(mainPrint,150);
-                        }
-                    }
                 }
                 else{
                     mainPrint();
@@ -175,6 +152,25 @@
                     if(indexInPrintShoot>5&&bulletCoordinatesList[indexInPrintShoot-1].y>secondPlayer.endPointY){
                         clearInterval(stopShoot);
                     }
+                }
+            }
+            
+                function damage(turn) {
+                    let currentPlayer=null;
+                    if(turn==="firstPlayer"){
+                        currentPlayer=firstPlayer;
+                    }else if(turn==="secondPlayer"){
+                        currentPlayer=secondPlayer;
+                    }
+                    ctx.drawImage(bum,bulletCoordinatesList[indexInPrintShoot].x,currentPlayer.startPointY-bullet.height/4-bullet.height);
+                        if(currentPlayer.life>0){
+                            currentPlayer.life-=20;
+                        }else{
+                            ctx.drawImage(bum,firstPlayer.startPointX+100,firstPlayer.startPointY-100);
+                            location.href="mainPage.html";
+                        }
+                    clearInterval(stopShoot);
+                    setTimeout(mainPrint,150);
                 }
                 
                 function whetherbulletXIsInPLayerX(turn){
@@ -204,7 +200,6 @@
                         return whetherbulletYIsInFirstPLayerY;
                     }        
                 }
-            }
 
             function mainPrint(){
                 printCanvasBackground();
@@ -263,7 +258,6 @@
                 function mouseDownFunction() {
                     return function(ev){
                         ifIsPressedLeftMouse=true;
-                        printAiming(ev.clientX,ev.clientY);
                         indexInPrintShoot=1;
                     }
                 }
