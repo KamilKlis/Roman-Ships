@@ -69,162 +69,161 @@
                 this.y=y;
             }
             
-            function printAiming(mouseMoveOnX,mouseMoveOnY) {    
-                mainPrint();
-                if(turn==="firstPlayer"){
-                    firstPlayerAiming(mouseMoveOnX,mouseMoveOnY);
-                }
-                else if(turn==="secondPlayer"){
-                    secondPlayerAiming(mouseMoveOnX,mouseMoveOnY);
-                }
+        function printAiming(mouseMoveOnX,mouseMoveOnY) {    
+            mainPrint();
+            if(turn==="firstPlayer"){
+                firstPlayerAiming(mouseMoveOnX,mouseMoveOnY);
             }
-            
-            function firstPlayerAiming(mouseMoveOnX,mouseMoveOnY){
-                aiming(mouseMoveOnX, mouseMoveOnY,firstPlayer.endPointX,firstPlayer.startPointY);    
+            else if(turn==="secondPlayer"){
+                secondPlayerAiming(mouseMoveOnX,mouseMoveOnY);
             }
+        }
             
-            function secondPlayerAiming(mouseMoveOnX,mouseMoveOnY){
-                aiming(mouseMoveOnX, mouseMoveOnY,secondPlayer.startPointX-bullet.width,secondPlayer.startPointY);
-            }
-            
-            function aiming(mouseMoveOnX, mouseMoveOnY,startPointX,startPointY) {
-                for(i=0;i<BULLET_COORDINATES_LIST_LENGHT;i++){
-                    setStartListValue();
-                    setListValuesLocation();
-                    printAim();
+                function firstPlayerAiming(mouseMoveOnX,mouseMoveOnY){
+                    aiming(mouseMoveOnX, mouseMoveOnY,firstPlayer.endPointX,firstPlayer.startPointY);    
+                }  
+                function secondPlayerAiming(mouseMoveOnX,mouseMoveOnY){
+                    aiming(mouseMoveOnX, mouseMoveOnY,secondPlayer.startPointX-bullet.width,secondPlayer.startPointY);
                 }
                 
-                function setStartListValue(){
-                    bullet.startPointX=startPointX;
-                    bullet.startPointY=startPointY;
-                    bulletCoordinatesList[i]=new Coordinates(bullet.startPointX,bullet.startPointY);
-                }
-                
-                function setListValuesLocation(){
-                    let flatteningIndex=1;
-                    let sensitivityOfAiming=0.02;
-                    for(j=1;j<BULLET_COORDINATES_LIST_LENGHT;j++){
+                        function aiming(mouseMoveOnX, mouseMoveOnY,startPointX,startPointY) {
+                            for(i=0;i<BULLET_COORDINATES_LIST_LENGHT;i++){
+                                setStartListValue();
+                                setListValuesLocation();
+                                printAim();
+                            }
+                            
+                            function setStartListValue(){
+                                bullet.startPointX=startPointX;
+                                bullet.startPointY=startPointY;
+                                bulletCoordinatesList[i]=new Coordinates(bullet.startPointX,bullet.startPointY);
+                            }
+                            
+                            function setListValuesLocation(){
+                                let flatteningIndex=1;
+                                let sensitivityOfAiming=0.02;
+                                for(j=1;j<BULLET_COORDINATES_LIST_LENGHT;j++){
+                                  
+                                    bullet.startPointX=bulletCoordinatesList[i].x+2*j*mouseMoveOnX;
+                                    bullet.startPointY=bulletCoordinatesList[i].y-flatteningIndex*j*(mouseMoveOnY+50);
+//                                    setObjectLinesAndPoints(bullet);
+                                    bulletCoordinatesList[i+j]=new Coordinates(bullet.startPointX,bullet.startPointY);
+            
+                                    flatteningIndex-=sensitivityOfAiming;
+                                }
+                                blockingTurnVariable=false;
+                            }
+                    
+                            function printAim(){
+                                printValues(0,7,"white");
+                            }   
                         
-                        bullet.startPointX=bulletCoordinatesList[i].x+2*j*mouseMoveOnX;
-                        bullet.startPointY=bulletCoordinatesList[i].y-flatteningIndex*j*(mouseMoveOnY+50);
-//                        setObjectLinesAndPoints(bullet);
-                        bulletCoordinatesList[i+j]=new Coordinates(bullet.startPointX,bullet.startPointY);
-
-                        flatteningIndex-=sensitivityOfAiming;
-                    }
-                }
-                
-                function printAim(){
-                    printValues(0,7,"white");
-                }
+                            function printValues(startNumber,endNumber,color){
+                                ctx.fillStyle=color;
+                                for(i=startNumber;i<bulletCoordinatesList.length;i++){
+                                    if(i<endNumber){ 
+                                        let aimPrinter=document.getElementById('aim');
+                                        ctx.drawImage(aimPrinter,bulletCoordinatesList[i].x,bulletCoordinatesList[i].y-bullet.height);
+                                    }
+                                }
+                            }
+                        }
             
-                function printValues(startNumber,endNumber,color){
-                    ctx.fillStyle=color;
-                    for(i=startNumber;i<bulletCoordinatesList.length;i++){
-                        if(i<endNumber){ 
-                            let aimPrinter=document.getElementById('aim');
-                            ctx.drawImage(aimPrinter,bulletCoordinatesList[i].x,bulletCoordinatesList[i].y-bullet.height);
+        function printShoot(){
+            stopShoot=setInterval(shoot,1000/60);
+        }
+            
+                let indexInPrintShoot=7;
+                let stopShoot;
+                let bum=document.getElementById('bumSmall');
+                function shoot(){
+                    if((whetherbulletXIsInPLayerX(turn)
+                        &&
+                        whetherbulletYIsInPLayerY(turn))
+                    ){
+                        mainPrint();
+                        damage(turn);
+                    }
+                    else{
+                        mainPrint();
+                        let bulletPrinter=document.getElementById('bullet');
+                        ctx.drawImage(bulletPrinter,bulletCoordinatesList[indexInPrintShoot].x,bulletCoordinatesList[indexInPrintShoot].y);
+                        indexInPrintShoot++;
+                        if(indexInPrintShoot>5&&bulletCoordinatesList[indexInPrintShoot-1].y>secondPlayer.endPointY){
+                            clearInterval(stopShoot);
                         }
                     }
                 }
-            }
             
-            function printShoot(){
-                stopShoot=setInterval(shoot,1000/60);
-            }
-            
-            let indexInPrintShoot=7;
-            let stopShoot;
-            let bum=document.getElementById('bumSmall');
-            function shoot(){
-                if((whetherbulletXIsInPLayerX(turn)
-                    &&
-                    whetherbulletYIsInPLayerY(turn))
-                ){
-                    mainPrint();
-                    damage(turn);
-                }
-                else{
-                    mainPrint();
-                    let bulletPrinter=document.getElementById('bullet');
-                    ctx.drawImage(bulletPrinter,bulletCoordinatesList[indexInPrintShoot].x,bulletCoordinatesList[indexInPrintShoot].y);
-                    indexInPrintShoot++;
-                    if(indexInPrintShoot>5&&bulletCoordinatesList[indexInPrintShoot-1].y>secondPlayer.endPointY){
-                        clearInterval(stopShoot);
-                    }
-                }
-            }
-            
-                function damage(turn) {
-                    let currentPlayer=null;
-                    if(turn==="firstPlayer"){
-                        currentPlayer=firstPlayer;
-                    }else if(turn==="secondPlayer"){
-                        currentPlayer=secondPlayer;
-                    }
-                    ctx.drawImage(bum,bulletCoordinatesList[indexInPrintShoot].x,currentPlayer.startPointY-bullet.height/4-bullet.height);
-                        if(currentPlayer.life>0){
-                            currentPlayer.life-=20;
-                        }else{
-                            ctx.drawImage(bum,firstPlayer.startPointX+100,firstPlayer.startPointY-100);
-                            location.href="mainPage.html";
+                        function damage(turn) {
+                            let currentPlayer=null;
+                            if(turn==="firstPlayer"){
+                                currentPlayer=firstPlayer;
+                            }else if(turn==="secondPlayer"){
+                                currentPlayer=secondPlayer;
+                            }
+                            ctx.drawImage(bum,bulletCoordinatesList[indexInPrintShoot].x,currentPlayer.startPointY-bullet.height/4-bullet.height);
+                                if(currentPlayer.life>0){
+                                    currentPlayer.life-=20;
+                                }else{
+                                    ctx.drawImage(bum,firstPlayer.startPointX+100,firstPlayer.startPointY-100);
+                                    location.href="mainPage.html";
+                                }
+                            clearInterval(stopShoot);
+                            setTimeout(mainPrint,150);
                         }
-                    clearInterval(stopShoot);
-                    setTimeout(mainPrint,150);
-                }
                 
-                function whetherbulletXIsInPLayerX(turn){
-                    if(turn==="secondPlayer"){
-                        let whetherbulletXIsInSecondPLayerX=
-                            bulletCoordinatesList[indexInPrintShoot].x+bullet.width>=secondPlayer.startPointX &&
-                            bulletCoordinatesList[indexInPrintShoot].x<=(secondPlayer.startPointX+secondPlayer.width);
-                        return whetherbulletXIsInSecondPLayerX;
-                    }
-                    else if(turn="firstPlayer"){
-                        let whetherbulletXIsInfirstPLayerX=
-                            bulletCoordinatesList[indexInPrintShoot].x+bullet.width>=firstPlayer.startPointX &&
-                            bulletCoordinatesList[indexInPrintShoot].x<=(firstPlayer.startPointX+firstPlayer.width);
-                        return whetherbulletXIsInfirstPLayerX;
-                    }
-                }
-                function whetherbulletYIsInPLayerY(turn){
-                    if(turn==="secondPlayer"){
-                        let whetherbulletYIsInSecondPLayerY=
-                            bulletCoordinatesList[indexInPrintShoot].y+bullet.height>=secondPlayer.startPointY &&
-                            bulletCoordinatesList[indexInPrintShoot].y<=(secondPlayer.endPointY);
-                        return whetherbulletYIsInSecondPLayerY;
-                    }else if(turn==="firstPlayer"){
-                        let whetherbulletYIsInFirstPLayerY=
-                            bulletCoordinatesList[indexInPrintShoot].y+bullet.height>=firstPlayer.startPointY &&
-                            bulletCoordinatesList[indexInPrintShoot].y<=(firstPlayer.endPointY);
-                        return whetherbulletYIsInFirstPLayerY;
-                    }        
-                }
+                                function whetherbulletXIsInPLayerX(turn){
+                                    if(turn==="secondPlayer"){
+                                        let whetherbulletXIsInSecondPLayerX=
+                                            bulletCoordinatesList[indexInPrintShoot].x+bullet.width>=secondPlayer.startPointX &&
+                                            bulletCoordinatesList[indexInPrintShoot].x<=(secondPlayer.startPointX+secondPlayer.width);
+                                        return whetherbulletXIsInSecondPLayerX;
+                                    }
+                                    else if(turn="firstPlayer"){
+                                        let whetherbulletXIsInfirstPLayerX=
+                                            bulletCoordinatesList[indexInPrintShoot].x+bullet.width>=firstPlayer.startPointX &&
+                                            bulletCoordinatesList[indexInPrintShoot].x<=(firstPlayer.startPointX+firstPlayer.width);
+                                        return whetherbulletXIsInfirstPLayerX;
+                                    }
+                                }
+                                function whetherbulletYIsInPLayerY(turn){
+                                    if(turn==="secondPlayer"){
+                                        let whetherbulletYIsInSecondPLayerY=
+                                            bulletCoordinatesList[indexInPrintShoot].y+bullet.height>=secondPlayer.startPointY &&
+                                            bulletCoordinatesList[indexInPrintShoot].y<=(secondPlayer.endPointY);
+                                        return whetherbulletYIsInSecondPLayerY;
+                                    }else if(turn==="firstPlayer"){
+                                        let whetherbulletYIsInFirstPLayerY=
+                                            bulletCoordinatesList[indexInPrintShoot].y+bullet.height>=firstPlayer.startPointY &&
+                                            bulletCoordinatesList[indexInPrintShoot].y<=(firstPlayer.endPointY);
+                                        return whetherbulletYIsInFirstPLayerY;
+                                    }        
+                                }
 
-            function mainPrint(){
-                printCanvasBackground();
-                printPlayer(firstPlayer);
-                printPlayer(secondPlayer);
-                
+        function mainPrint(){
+            printCanvasBackground();
+            printPlayer(firstPlayer);
+            printPlayer(secondPlayer);
+               
                 function printCanvasBackground(){
-
                     let background=document.getElementById('background');
                     ctx.drawImage(background,0,0);
                 }
                 function printPlayer(player){
                     let boat=document.getElementById('boat');
                     ctx.drawImage(boat,player.startPointX,player.startPointY);
-                    
+                   
                     let heart=document.getElementById('heart');
-                    
+                   
                     ctx.drawImage(heart,player.centerX-player.life/2-20,player.centerY-40-heart.height/2+2);
                     ctx.fillStyle="red";
                     ctx.fillRect(player.centerX-player.life/2+10,player.centerY-40,player.life,5);
                 }
-            }
+        }
             
-            mainPrint();
-            addEvents();
+        mainPrint();
+        addEvents();
             
             function addEvents(){
                 
@@ -257,14 +256,13 @@
                 }
                 function mouseDownFunction() {
                     return function(ev){
-                        ifIsPressedLeftMouse=true;
+                        ifIsPressedLeftMouse=false;
                         indexInPrintShoot=1;
                     }
                 }
-                
-    
                 function mouseUpFunction(){
                     return function(ev){
+                        blockingTurnVariable=true;
                         ifIsPressedLeftMouse=false;
                         printShoot();
                         if(turn==="firstPlayer"){
@@ -276,7 +274,6 @@
                         firstClickOnY=undefined;
                     }
                 }
-            
                 function mouseMoveFunction(){
                     return function(ev){
                         if(ifIsPressedLeftMouse===true){
@@ -306,7 +303,7 @@
                             }
                         }
                     }
-                }     
+                }  
             
 
             
